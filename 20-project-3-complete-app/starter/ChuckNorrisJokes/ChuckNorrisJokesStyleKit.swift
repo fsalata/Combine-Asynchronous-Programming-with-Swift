@@ -31,9 +31,9 @@
 import UIKit
 
 public class ChuckNorrisJokesStyleKit : NSObject {
-
+    
     //// Cache
-
+    
     private struct Cache {
         static let colorBlue: UIColor = UIColor(red: 0.231, green: 0.349, blue: 0.596, alpha: 1.000)
         static let colorGreen: UIColor = UIColor(red: 0.000, green: 0.800, blue: 0.000, alpha: 1.000)
@@ -43,15 +43,15 @@ public class ChuckNorrisJokesStyleKit : NSObject {
         static var imageOfROFLIcon: UIImage?
         static var rOFLIconTargets: [AnyObject]?
     }
-
+    
     //// Colors
-
+    
     @objc dynamic public class var colorBlue: UIColor { return Cache.colorBlue }
     @objc dynamic public class var colorGreen: UIColor { return Cache.colorGreen }
     @objc dynamic public class var colorRed: UIColor { return Cache.colorRed }
-
+    
     //// Drawing Methods
-
+    
     @objc dynamic public class func drawAppIcon(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 120, height: 120), resizing: ResizingBehavior = .aspectFit) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
@@ -61,8 +61,8 @@ public class ChuckNorrisJokesStyleKit : NSObject {
         let resizedFrame: CGRect = resizing.apply(rect: CGRect(x: 0, y: 0, width: 120, height: 120), target: targetFrame)
         context.translateBy(x: resizedFrame.minX, y: resizedFrame.minY)
         context.scaleBy(x: resizedFrame.width / 120, y: resizedFrame.height / 120)
-
-
+        
+        
         //// Rectangle Drawing
         let rectangleRect = CGRect(x: 0, y: 0, width: 120, height: 120)
         let rectanglePath = UIBezierPath(rect: rectangleRect)
@@ -75,13 +75,13 @@ public class ChuckNorrisJokesStyleKit : NSObject {
             .foregroundColor: UIColor.black,
             .paragraphStyle: rectangleStyle,
         ] as [NSAttributedString.Key: Any]
-
+        
         "👊".draw(in: rectangleRect, withAttributes: rectangleFontAttributes)
         
         context.restoreGState()
-
+        
     }
-
+    
     @objc dynamic public class func drawThumbDownIcon(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 200, height: 200), resizing: ResizingBehavior = .aspectFit) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
@@ -91,8 +91,8 @@ public class ChuckNorrisJokesStyleKit : NSObject {
         let resizedFrame: CGRect = resizing.apply(rect: CGRect(x: 0, y: 0, width: 200, height: 200), target: targetFrame)
         context.translateBy(x: resizedFrame.minX, y: resizedFrame.minY)
         context.scaleBy(x: resizedFrame.width / 200, y: resizedFrame.height / 200)
-
-
+        
+        
         //// thumb-down Drawing
         let thumbdownPath = UIBezierPath()
         thumbdownPath.move(to: CGPoint(x: 57.14, y: 121.43))
@@ -171,9 +171,9 @@ public class ChuckNorrisJokesStyleKit : NSObject {
         thumbdownPath.fill()
         
         context.restoreGState()
-
+        
     }
-
+    
     @objc dynamic public class func drawROFLIcon(frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 200, height: 200), resizing: ResizingBehavior = .aspectFit) {
         //// General Declarations
         let context = UIGraphicsGetCurrentContext()!
@@ -183,13 +183,13 @@ public class ChuckNorrisJokesStyleKit : NSObject {
         let resizedFrame: CGRect = resizing.apply(rect: CGRect(x: 0, y: 0, width: 200, height: 200), target: targetFrame)
         context.translateBy(x: resizedFrame.minX, y: resizedFrame.minY)
         context.scaleBy(x: resizedFrame.width / 200, y: resizedFrame.height / 200)
-
-
+        
+        
         //// rofl Drawing
         context.saveGState()
         context.translateBy(x: -24.5, y: 100.5)
         context.rotate(by: -45 * CGFloat.pi/180)
-
+        
         let roflPath = UIBezierPath()
         roflPath.move(to: CGPoint(x: 127.99, y: 79.99))
         roflPath.addLine(to: CGPoint(x: 105.36, y: 57.36))
@@ -236,45 +236,45 @@ public class ChuckNorrisJokesStyleKit : NSObject {
         roflPath.close()
         ChuckNorrisJokesStyleKit.colorGreen.setFill()
         roflPath.fill()
-
+        
         context.restoreGState()
         
         context.restoreGState()
-
+        
     }
-
+    
     //// Generated Images
-
+    
     @objc dynamic public class var imageOfThumbDownIcon: UIImage {
         if Cache.imageOfThumbDownIcon != nil {
             return Cache.imageOfThumbDownIcon!
         }
-
+        
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 200, height: 200), false, 0)
-            ChuckNorrisJokesStyleKit.drawThumbDownIcon()
-
+        ChuckNorrisJokesStyleKit.drawThumbDownIcon()
+        
         Cache.imageOfThumbDownIcon = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
-
+        
         return Cache.imageOfThumbDownIcon!
     }
-
+    
     @objc dynamic public class var imageOfROFLIcon: UIImage {
         if Cache.imageOfROFLIcon != nil {
             return Cache.imageOfROFLIcon!
         }
-
+        
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 200, height: 200), false, 0)
-            ChuckNorrisJokesStyleKit.drawROFLIcon()
-
+        ChuckNorrisJokesStyleKit.drawROFLIcon()
+        
         Cache.imageOfROFLIcon = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
-
+        
         return Cache.imageOfROFLIcon!
     }
-
+    
     //// Customization Infrastructure
-
+    
     @objc @IBOutlet dynamic var thumbDownIconTargets: [AnyObject]! {
         get { return Cache.thumbDownIconTargets }
         set {
@@ -284,7 +284,7 @@ public class ChuckNorrisJokesStyleKit : NSObject {
             }
         }
     }
-
+    
     @objc @IBOutlet dynamic var rOFLIconTargets: [AnyObject]! {
         get { return Cache.rOFLIconTargets }
         set {
@@ -294,40 +294,40 @@ public class ChuckNorrisJokesStyleKit : NSObject {
             }
         }
     }
-
-
-
-
+    
+    
+    
+    
     @objc(ChuckNorrisJokesStyleKitResizingBehavior)
     public enum ResizingBehavior: Int {
         case aspectFit /// The content is proportionally resized to fit into the target rectangle.
         case aspectFill /// The content is proportionally resized to completely fill the target rectangle.
         case stretch /// The content is stretched to match the entire target rectangle.
         case center /// The content is centered in the target rectangle, but it is NOT resized.
-
+        
         public func apply(rect: CGRect, target: CGRect) -> CGRect {
             if rect == target || target == CGRect.zero {
                 return rect
             }
-
+            
             var scales = CGSize.zero
             scales.width = abs(target.width / rect.width)
             scales.height = abs(target.height / rect.height)
-
+            
             switch self {
-                case .aspectFit:
-                    scales.width = min(scales.width, scales.height)
-                    scales.height = scales.width
-                case .aspectFill:
-                    scales.width = max(scales.width, scales.height)
-                    scales.height = scales.width
-                case .stretch:
-                    break
-                case .center:
-                    scales.width = 1
-                    scales.height = 1
+            case .aspectFit:
+                scales.width = min(scales.width, scales.height)
+                scales.height = scales.width
+            case .aspectFill:
+                scales.width = max(scales.width, scales.height)
+                scales.height = scales.width
+            case .stretch:
+                break
+            case .center:
+                scales.width = 1
+                scales.height = 1
             }
-
+            
             var result = rect.standardized
             result.size.width *= scales.width
             result.size.height *= scales.height

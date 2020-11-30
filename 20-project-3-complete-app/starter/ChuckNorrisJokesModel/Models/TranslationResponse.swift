@@ -29,10 +29,10 @@
 import Foundation
 
 struct TranslationResponse: Codable {
-  enum CodingKeys: String, CodingKey {
-    case languageCode = "lang", translations = "text"
-  }
-  
-  let languageCode: String
-  let translations: [String]
+    enum CodingKeys: String, CodingKey {
+        case languageCode = "lang", translations = "text"
+    }
+    
+    let languageCode: String
+    let translations: [String]
 }

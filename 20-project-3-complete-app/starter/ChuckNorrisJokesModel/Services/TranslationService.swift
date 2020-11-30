@@ -30,16 +30,16 @@ import Foundation
 import Combine
 
 public struct TranslationService {
-  static let apiKey = "trnsl.1.1.20190822T112140Z.d96fa7f4ed58ada0.f7a7297172fb385a6ae2c415b252b0d530e6f495"
-  
-  private func url(for joke: Joke, languageCode: String) -> URL {
-    var components = URLComponents()
-    components.scheme = "https"
-    components.host = "translate.yandex.net"
-    components.path = "/api/v1.5/tr.json/translate"
-    components.setQueryItems(with: ["key": TranslationService.apiKey, "text": joke.value, "lang": languageCode])
-    return components.url!
-  }
-
-  public init() { }
+    static let apiKey = "trnsl.1.1.20190822T112140Z.d96fa7f4ed58ada0.f7a7297172fb385a6ae2c415b252b0d530e6f495"
+    
+    private func url(for joke: Joke, languageCode: String) -> URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "translate.yandex.net"
+        components.path = "/api/v1.5/tr.json/translate"
+        components.setQueryItems(with: ["key": TranslationService.apiKey, "text": joke.value, "lang": languageCode])
+        return components.url!
+    }
+    
+    public init() { }
 }

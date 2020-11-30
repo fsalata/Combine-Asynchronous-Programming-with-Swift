@@ -30,47 +30,49 @@ import SwiftUI
 import ChuckNorrisJokesModel
 
 struct SavedJokesView: View {
-  var body: some View {
-    VStack {
-      NavigationView {
-        List {
-          ForEach(jokes, id: \.self) { joke in
-            Text(joke)
-              .lineLimit(nil)
-          }
-          .onDelete { indices in
+    var body: some View {
+        VStack {
+            NavigationView {
+                List {
+                    ForEach(jokes, id: \.self) { joke in
+                        Text(joke.value ?? "N/A")
+                            .lineLimit(nil)
+                    }
+                    .onDelete { indices in
+                        self.jokes.delete(at: indices, inViewContext: self.viewContext)
+                    }
+                }
+                .navigationBarTitle("Saved Jokes")
+                .navigationBarItems(trailing:
+                                        Button(action: {
+                                            self.showTranslation.toggle()
+                                        }) {
+                                            Text("Toggle Language")
+                                        }
+                )
+            }
             
-          }
+            Button(action: {
+                let url = URL(string: "http://translate.yandex.com")!
+                UIApplication.shared.open(url)
+            }) {
+                Text("Translations Powered by Yandex.Translate")
+                    .font(.caption)
+            }
+            .opacity(showTranslation ? 1 : 0)
+            .animation(.easeInOut)
         }
-        .navigationBarTitle("Saved Jokes")
-        .navigationBarItems(trailing:
-          Button(action: {
-            self.showTranslation.toggle()
-          }) {
-            Text("Toggle Language")
-          }
-        )
-      }
-      
-      Button(action: {
-        let url = URL(string: "http://translate.yandex.com")!
-        UIApplication.shared.open(url)
-      }) {
-        Text("Translations Powered by Yandex.Translate")
-          .font(.caption)
-      }
-      .opacity(showTranslation ? 1 : 0)
-      .animation(.easeInOut)
     }
-  }
-  
-  @State private var showTranslation = false
-  
-  private var jokes = [String]()
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @State private var showTranslation = false
+    
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \JokeManagedObject.value, ascending: true)], animation: .default) private var jokes: FetchedResults<JokeManagedObject>
 }
 
 struct SavedJokesView_Previews: PreviewProvider {
-  static var previews: some View {
-    SavedJokesView()
-  }
+    static var previews: some View {
+        SavedJokesView()
+    }
 }

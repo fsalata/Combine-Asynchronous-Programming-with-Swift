@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		008BDDFB25751EBD008A195C /* JokeManagedObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008BDDFA25751EBD008A195C /* JokeManagedObject+.swift */; };
 		D228A084231334E200EB6975 /* MockJokesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D228A083231334E200EB6975 /* MockJokesService.swift */; };
 		D228A08623134C6E00EB6975 /* TestJoke.json in Resources */ = {isa = PBXBuildFile; fileRef = D228A08523134B3B00EB6975 /* TestJoke.json */; };
 		D228A08823134F7800EB6975 /* TestTranslatedJoke.json in Resources */ = {isa = PBXBuildFile; fileRef = D228A08723134F7800EB6975 /* TestTranslatedJoke.json */; };
@@ -71,6 +72,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		008BDDFA25751EBD008A195C /* JokeManagedObject+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JokeManagedObject+.swift"; sourceTree = "<group>"; };
 		D228A083231334E200EB6975 /* MockJokesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockJokesService.swift; sourceTree = "<group>"; };
 		D228A08523134B3B00EB6975 /* TestJoke.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = TestJoke.json; sourceTree = "<group>"; };
 		D228A08723134F7800EB6975 /* TestTranslatedJoke.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestTranslatedJoke.json; sourceTree = "<group>"; };
@@ -271,6 +273,7 @@
 			isa = PBXGroup;
 			children = (
 				D28F40B523537953009EE25E /* ChuckNorrisJokes.xcdatamodeld */,
+				008BDDFA25751EBD008A195C /* JokeManagedObject+.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -485,6 +488,7 @@
 				D2568BB6230AEB6A00FFB4E3 /* HUDView.swift in Sources */,
 				D2E94672230B53020012CFFB /* JokeCardView.swift in Sources */,
 				D2568B7D230AE10300FFB4E3 /* AppDelegate.swift in Sources */,
+				008BDDFB25751EBD008A195C /* JokeManagedObject+.swift in Sources */,
 				D2568BB0230AEAA600FFB4E3 /* ChuckNorrisJokesStyleKit.swift in Sources */,
 				D2E94671230B53020012CFFB /* JokeView.swift in Sources */,
 				D2568B7F230AE10300FFB4E3 /* SceneDelegate.swift in Sources */,
@@ -633,7 +637,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -687,7 +691,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
