@@ -42,12 +42,8 @@ struct MockJokesService: JokeServiceDataPublisher {
     func publisher() -> AnyPublisher<Data, URLError> {
         let publisher = CurrentValueSubject<Data, URLError>(data)
         
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            if let error = error {
-                publisher.send(completion: .failure(error))
-            } else {
-                publisher.send(data)
-            }
+        if let error = error {
+            publisher.send(completion: .failure(error))
         }
         
         return publisher.eraseToAnyPublisher()

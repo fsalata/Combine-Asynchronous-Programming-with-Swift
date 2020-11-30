@@ -31,13 +31,23 @@ import Combine
 @testable import ChuckNorrisJokesModel
 
 struct MockTranslationService: TranslationServiceDataPublisher {
-  let data: Data
-  let error: URLError?
-  
-  init(data: Data, error: URLError? = nil) {
-    self.data = data
-    self.error = error
-  }
-  
-  
+    let data: Data
+    let error: URLError?
+    
+    init(data: Data, error: URLError? = nil) {
+        self.data = data
+        self.error = error
+    }
+    
+    func publisher(for joke: Joke, languageCode: String) -> AnyPublisher<Data, URLError> {
+        let publisher = CurrentValueSubject<Data, URLError>(data)
+        
+        if let error = error {
+            DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+                publisher.send(completion: .failure(error))
+            }
+        }
+        
+        return publisher.eraseToAnyPublisher()
+    }
 }

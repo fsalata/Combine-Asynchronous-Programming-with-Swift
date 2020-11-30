@@ -30,5 +30,5 @@ import Foundation
 import Combine
 
 public protocol TranslationServiceDataPublisher {
-    
+    func publisher(for joke: Joke, languageCode: String) -> AnyPublisher<Data, URLError>
 }

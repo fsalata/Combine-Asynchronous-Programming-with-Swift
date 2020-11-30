@@ -41,15 +41,18 @@ public final class JokesViewModel: ObservableObject {
     @Published public var joke: Joke = Joke.starter
     @Published public var backgroundColor = Color("Gray")
     @Published public var decisionState: DecisionState = .undecided
+    @Published public var showTranslation: Bool = false
     
     private let jokesService: JokeServiceDataPublisher
+    private let translationService: TranslationServiceDataPublisher
     
     private var subscriptions = Set<AnyCancellable>()
     private var jokeSubscriptions = Set<AnyCancellable>()
     
     public init(jokesService: JokeServiceDataPublisher = JokesService(),
-                translationService: TranslationServiceDataPublisher? = nil) {
+                translationService: TranslationServiceDataPublisher = TranslationService()) {
         self.jokesService = jokesService
+        self.translationService = translationService
         
         $joke
             .map { _ in false }
@@ -64,12 +67,38 @@ public final class JokesViewModel: ObservableObject {
             .decode(type: Joke.self, decoder: Self.decoder)
             .replaceError(with: Joke.error)
             .receive(on: DispatchQueue.main)
-            .assign(to: &$joke)
+            .handleEvents(receiveOutput: { [unowned self] in
+                self.joke = $0
+            })
+            .filter { $0 != Joke.error }
+            .flatMap { [unowned self] joke in
+                self.fetchTranslation(for: joke, to: "es")
+            }
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.joke, on: self)
+            .store(in: &jokeSubscriptions)
     }
     
     func fetchTranslation(for joke: Joke, to languageCode: String)
     -> AnyPublisher<Joke, Never> {
-        return Empty().eraseToAnyPublisher()
+        guard joke.languageCode != languageCode else {
+            return Just(joke).eraseToAnyPublisher()
+        }
+        
+        return  translationService.publisher(for: joke, languageCode: languageCode)
+            .retry(1)
+            .decode(type: TranslationResponse.self, decoder: Self.decoder)
+            .compactMap { $0.translations.first }
+            .map {
+                Joke(id: joke.id,
+                     value: joke.value,
+                     categories: joke.categories,
+                     languageCode: languageCode,
+                     translationLanguageCode: languageCode,
+                     translatedValue: $0)
+            }
+            .replaceError(with: Joke.error)
+            .eraseToAnyPublisher()
     }
     
     public func updateBackgroundColorForTranslation(_ translation: Double) {

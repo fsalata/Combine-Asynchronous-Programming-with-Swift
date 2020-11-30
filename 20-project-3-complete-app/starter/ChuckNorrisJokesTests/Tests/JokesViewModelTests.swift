@@ -32,118 +32,211 @@ import SwiftUI
 @testable import ChuckNorrisJokesModel
 
 final class JokesViewModelTests: XCTestCase {
-  private lazy var testJoke = self.testJoke(forResource: "TestJoke")
-  private lazy var testTranslatedJokeValue = self.testJoke(forResource: "TestTranslatedJoke").value.value
-  private lazy var error = URLError(.badServerResponse)
-  private var subscriptions = Set<AnyCancellable>()
-  
-  private lazy var testTranslationResponseData: Data = {
-    let bundle = Bundle(for: type(of: self))
+    private lazy var testJoke = self.testJoke(forResource: "TestJoke")
+    private lazy var testTranslatedJokeValue = self.testJoke(forResource: "TestTranslatedJoke").value.value
+    private lazy var error = URLError(.badServerResponse)
+    private var subscriptions = Set<AnyCancellable>()
     
-    guard let url = bundle.url(forResource: "TestTranslationResponse", withExtension: "json"),
-      let data = try? Data(contentsOf: url)
-      else { fatalError("Failed to load TestTranslationResponse") }
+    private lazy var testTranslationResponseData: Data = {
+        let bundle = Bundle(for: type(of: self))
+        
+        guard let url = bundle.url(forResource: "TestTranslationResponse", withExtension: "json"),
+              let data = try? Data(contentsOf: url)
+        else { fatalError("Failed to load TestTranslationResponse") }
+        
+        return data
+    }()
     
-    return data
-  }()
-  
-  override func tearDown() {
-    subscriptions = []
-  }
-  
-  private func testJoke(forResource resource: String) -> (data: Data, value: Joke) {
-    let bundle = Bundle(for: type(of: self))
-    
-    guard let url = bundle.url(forResource: resource, withExtension: "json"),
-      let  data = try? Data(contentsOf: url),
-      let joke = try? JSONDecoder().decode(Joke.self, from: data)
-      else { fatalError("Failed to load \(resource)") }
-    
-    return (data, joke)
-  }
-    
-  
-  
-  func test_createJokesWithSampleJokeData() {
-    // Given
-    guard let url = Bundle.main.url(forResource: "SampleJoke", withExtension: "json"),
-      let data = try? Data(contentsOf: url)
-      else { return XCTFail("SampleJoke file missing or data is corrupted") }
-    
-    let sampleJoke: Joke
-    
-    // When
-    do {
-      sampleJoke = try JSONDecoder().decode(Joke.self, from: data)
-    } catch {
-      return XCTFail(error.localizedDescription)
+    override func tearDown() {
+        subscriptions = []
     }
     
-    // Then
-    XCTAssert(sampleJoke.categories.count == 1, "Sample joke categories.count was expected to be 1 but was \(sampleJoke.categories.count)")
-    XCTAssert(sampleJoke.value == "Chuck Norris writes code that optimizes itself.", "First sample joke was expected to be \"Chuck Norris writes code that optimizes itself.\" but was \"\(sampleJoke.value)\"")
-  }
-  
-  func test_backgroundColorFor50TranslationPercentIsGreen() {
-    // Given
+    private func testJoke(forResource resource: String) -> (data: Data, value: Joke) {
+        let bundle = Bundle(for: type(of: self))
+        
+        guard let url = bundle.url(forResource: resource, withExtension: "json"),
+              let  data = try? Data(contentsOf: url),
+              let joke = try? JSONDecoder().decode(Joke.self, from: data)
+        else { fatalError("Failed to load \(resource)") }
+        
+        return (data, joke)
+    }
     
-    // When
+    private func mockJokesService(withError: Bool = false) ->  MockJokesService {
+        MockJokesService(data: testJoke.data, error: withError ? error : nil)
+    }
     
-    // Then
+    private func mockTranslationService(withError: Bool = false) -> MockTranslationService {
+        MockTranslationService(data: testTranslationResponseData, error: withError ? error : nil)
+    }
     
-  }
-  
-  func test_decisionStateFor60TranslationPercentIsLiked() {
-    // Given
+    private func viewModel(withJokeError jokeError: Bool =  false) -> JokesViewModel {
+        JokesViewModel(jokesService: mockJokesService(withError: jokeError), translationService: mockTranslationService(withError: jokeError))
+    }
     
-    // When
+    func test_createJokesWithSampleJokeData() {
+        // Given
+        guard let url = Bundle.main.url(forResource: "SampleJoke", withExtension: "json"),
+              let data = try? Data(contentsOf: url)
+        else { return XCTFail("SampleJoke file missing or data is corrupted") }
+        
+        let sampleJoke: Joke
+        
+        // When
+        do {
+            sampleJoke = try JSONDecoder().decode(Joke.self, from: data)
+        } catch {
+            return XCTFail(error.localizedDescription)
+        }
+        
+        // Then
+        XCTAssert(sampleJoke.categories.count == 1, "Sample joke categories.count was expected to be 1 but was \(sampleJoke.categories.count)")
+        XCTAssert(sampleJoke.value == "Chuck Norris writes code that optimizes itself.", "First sample joke was expected to be \"Chuck Norris writes code that optimizes itself.\" but was \"\(sampleJoke.value)\"")
+    }
     
-    // Then
+    func test_backgroundColorFor50TranslationPercentIsGreen() {
+        // Given
+        let viewModel = self.viewModel()
+        let translation = 0.5
+        let expected = Color("Green")
+        var result = Color.white
+        
+        
+        viewModel.$backgroundColor
+            .sink { result = $0 }
+            .store(in: &subscriptions)
+        
+        // When
+        viewModel.updateBackgroundColorForTranslation(translation)
+        
+        // Then
+        XCTAssertEqual(result, expected, "Result was expected to be \(expected) but was \(result)")
+    }
     
-  }
-  
-  func test_decisionStateFor59TranslationPercentIsUndecided() {
-    // Given
+    func test_decisionStateFor60TranslationPercentIsLiked() {
+        // Given
+        let viewModel = self.viewModel()
+        let translation = 0.6
+        let bounds = CGRect(x: 0, y: 0, width: 640, height: 960)
+        let x = bounds.width
+        let expected: JokesViewModel.DecisionState = .liked
+        var result: JokesViewModel.DecisionState = .undecided
+        
+        viewModel.$decisionState
+            .sink { result = $0 }
+            .store(in: &subscriptions)
+        
+        // When
+        viewModel.updateDecisionStateForTranslation(translation, andPredictedEndLocationX: x, inBounds: bounds)
+        
+        // Then
+        XCTAssertEqual(result, expected, "Result was expected to be \(expected) but was \(result)")
+    }
     
-    // When
+    func test_decisionStateFor59TranslationPercentIsUndecided() {
+        // Given
+        let viewModel = self.viewModel()
+        let translation = 0.59
+        let bounds = CGRect(x: 0, y: 0, width: 640, height: 960)
+        let x = bounds.width
+        let expected: JokesViewModel.DecisionState = .undecided
+        var result: JokesViewModel.DecisionState = .undecided
+        
+        viewModel.$decisionState
+            .sink { result = $0 }
+            .store(in: &subscriptions)
+        
+        // When
+        viewModel.updateDecisionStateForTranslation(translation, andPredictedEndLocationX: x, inBounds: bounds)
+        
+        // Then
+        XCTAssertEqual(result, expected, "Result was expected to be \(expected) but was \(result)")
+    }
     
-    // Then
+    func test_fetchJokeSucceeds() {
+        // Given
+        let viewModel = self.viewModel()
+        let expected = testJoke.value
+        var result: Joke!
+        let expectation = self.expectation(description: #function)
+        
+        viewModel.$joke
+            .dropFirst()
+            .sink(receiveValue: {
+                result = $0
+                expectation.fulfill()
+            })
+            .store(in: &subscriptions)
+        
+        // When
+        viewModel.fetchJoke()
+        
+        // Then
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(result, expected, "Result was expected to be \(expected) but was \(result!)")
+    }
     
-  }
-  
-  func test_fetchJokeSucceeds() {
-    // Given
+    func test_fetchJokeReceivesErrorJoke() {
+        // Given
+        let viewModel = self.viewModel(withJokeError: true)
+        let expectation = self.expectation(description: #function)
+        let expected = Joke.error
+        var result: Joke!
+        
+        viewModel.$joke
+            .dropFirst()
+            .sink(receiveValue: {
+                result = $0
+                expectation.fulfill()
+            })
+            .store(in: &subscriptions)
+        
+        // When
+        viewModel.fetchJoke()
+        
+        // Then
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(result, expected, "Joke expected to be \(expected) but was \(result!)")
+    }
     
-    // When
+    func test_fetchTranslationForJokeSucceeds() {
+        // Given
+        let viewModel = self.viewModel()
+        let expected = testTranslatedJokeValue
+        var result: Joke!
+        let expectation = self.expectation(description: #function)
+        
+        // When
+        viewModel.fetchTranslation(for: testJoke.value, to: "es")
+            .sink(receiveValue: {
+                result = $0
+                expectation.fulfill()
+            })
+            .store(in: &subscriptions)
+        
+        // Then
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(result.translatedValue, expected, "Joke expected to be \(expected) but was \(result!)")
+    }
     
-    // Then
-    
-  }
-  
-  func test_fetchJokeReceivesErrorJoke() {
-    // Given
-    
-    // When
-    
-    // Then
-    
-  }
-  
-  func test_fetchTranslationForJokeSucceeds() {
-    // Given
-    
-    // When
-    
-    // Then
-    
-  }
-  
-  func test_fetchTranslationForJokeReceivesErrorJoke() {
-    // Given
-    
-    // When
-    
-    // Then
-    
-  }
+    func test_fetchTranslationForJokeReceivesErrorJoke() {
+        // Given
+        let viewModel = self.viewModel(withJokeError: true)
+        let expectation = self.expectation(description: #function)
+        let expected = Joke.error.translatedValue
+        var result: Joke!
+        
+        // When
+        viewModel.fetchTranslation(for: testJoke.value, to: "es")
+            .dropFirst()
+            .sink {
+                result = $0
+                expectation.fulfill()
+            }
+            .store(in: &subscriptions)
+        
+        // Then
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(result.translatedValue, expected, "Joke expected to be \(expected) but was \(result!)")
+    }
 }

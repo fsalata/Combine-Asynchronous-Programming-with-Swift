@@ -35,7 +35,7 @@ struct JokeCardView: View {
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 20) {
-                Text(viewModel.joke.value)
+                Text(self.viewModel.showTranslation ? viewModel.joke.translatedValue : viewModel.joke.value)
                     .font(.largeTitle)
                     .foregroundColor(.primary)
                     .minimumScaleFactor(0.2)
@@ -55,7 +55,9 @@ struct JokeCardView: View {
                 
                 LargeInlineButton(
                     title: "Toggle Language",
-                    action: { }
+                    action: {
+                        self.viewModel.showTranslation.toggle()
+                    }
                 )
                 .animation(.easeInOut)
             }

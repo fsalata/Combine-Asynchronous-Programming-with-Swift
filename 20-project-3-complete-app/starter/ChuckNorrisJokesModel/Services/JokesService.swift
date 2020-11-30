@@ -53,6 +53,4 @@ extension JokesService: JokeServiceDataPublisher {
             .map(\.data)
             .eraseToAnyPublisher()
     }
-    
-    
 }
