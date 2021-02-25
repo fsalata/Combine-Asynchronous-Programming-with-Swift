@@ -1,1 +1,1 @@
-Playgounds and projects implemented while following the book [Combine: Asynchronous Programming with Swift](https://www.raywenderlich.com/books/combine-asynchronous-programming-with-swift/v2.0)  
+Playgounds and projects implemented while following the book [Practical Core Data](https://gumroad.com/l/practical-core-data) by Donny Wals.
